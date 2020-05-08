@@ -28,6 +28,42 @@ app.get("/", (req,res) => {
     res.sendFile(path.join(__dirname, 'public', 'stats.html'));
   });
 
+  //GET
+app.get("/api/workouts", (req,res) => {
+    db.Workout.find({}).sort({day:-1}).limit(1)
+    .then(dbWorkout => {
+      res.json(dbWorkout);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+  });
+  
+  app.get("/api/workouts/range", (req,res) => {
+    db.Workout.find({})
+    .then(dbWorkout => {
+      res.json(dbWorkout);
+    })
+    .catch(err => {
+      res.json(err);
+    });
+  });
+
+
+  //POST
+app.post("/api/workouts", (req,res) => {
+
+    let data = req.body;
+  
+    db.Workout.create({
+      day: new Date().setDate(new Date().getDate())
+  }).then(dbUpdate => {
+        res.json(dbUpdate);
+      })
+      .catch(err => {
+        res.json(err);
+      });
+  });
 
 // connect to DB
 connectDB()
