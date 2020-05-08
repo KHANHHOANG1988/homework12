@@ -13,5 +13,26 @@ let app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/public')));
-// Set the port of our application, process.env.PORT lets the port be set by Heroku
 let PORT = process.env.PORT || 8080;
+
+// Routes
+app.get("/", (req,res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+  });
+  
+  app.get("/exercise", (req,res) => {
+      res.sendFile(path.join(__dirname, 'public', 'exercise.html'));
+  });
+  
+  app.get("/stats", (req,res) => {
+    res.sendFile(path.join(__dirname, 'public', 'stats.html'));
+  });
+
+
+// connect to DB
+connectDB()
+
+// Start server 
+app.listen(PORT, function() {
+  console.log("Server listening on: http://localhost:" + PORT);
+});
