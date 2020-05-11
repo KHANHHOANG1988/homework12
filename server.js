@@ -2,10 +2,8 @@
 const express = require("express");
 const bodyParser = require('body-parser');
 const path = require('path');
-// DB Connection 
-require('dotenv/config');
-const connectDB = require("./config/connectDB.js");
-
+const logger = require("morgan");
+const mongoose = require("mongoose");
 // Models
 const db = require("./models");
 // App
@@ -14,6 +12,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, '/public')));
 let PORT = process.env.PORT || 8080;
+app.use(logger("dev"));
+var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/workout";
+
+mongoose.connect(MONGODB_URI);
 
 // Routes
 app.get("/", (req,res) => {
@@ -90,8 +92,6 @@ app.post("/api/workouts", (req,res) => {
       });
   });
 
-// connect to DB
-connectDB()
 
 // Start server 
 app.listen(PORT, function() {
