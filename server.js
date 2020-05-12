@@ -18,82 +18,85 @@ var MONGODB_URI = process.env.MONGODB_URI || "mongodb://localhost/workout";
 mongoose.connect(MONGODB_URI);
 
 // Routes
-app.get("/", (req,res) => {
-    res.sendFile(path.join(__dirname, 'public', 'index.html'));
-  });
-  
-app.get("/exercise", (req,res) => {
-    res.sendFile(path.join(__dirname, 'public', 'exercise.html'));
-});
-  
-app.get("/stats", (req,res) => {
-    res.sendFile(path.join(__dirname, 'public', 'stats.html'));
+app.get("/", (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
-  //GET
-app.get("/api/workouts", (req,res) => {
-    db.Workout.find({}).sort({day:-1}).limit(1)
+app.get("/exercise", (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'exercise.html'));
+});
+
+app.get("/stats", (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'stats.html'));
+});
+
+//GET
+app.get("/api/workouts", (req, res) => {
+  db.Workout.find({}).sort({ day: -1 }).limit(1)
     .then(dbWorkout => {
       res.json(dbWorkout);
     })
     .catch(err => {
       res.json(err);
     });
-  });
+});
 
-app.get("/api/workouts/range", (req,res) => {
-    db.Workout.find({})
+app.get("/api/workouts/range", (req, res) => {
+  db.Workout.find({})
     .then(dbWorkout => {
       res.json(dbWorkout);
     })
     .catch(err => {
       res.json(err);
     });
-  });
+});
 
-  //PUT
+//PUT
 
-app.put("/api/workouts/:id", (req,res) => {
+app.put("/api/workouts/:id", (req, res) => {
 
   let urlData = req.params;
   let data = req.body;
-    db.Workout.updateOne( {_id: urlData.id }, {$push: {exercises:  [
-      {
-      "type" : data.type,
-      "name" : data.name,
-      "duration" : data.duration,
-      "distance" : data.distance,
-      "weight" : data.weight,
-      "reps" : data.reps,
-      "sets" : data.sets
-      }
-    ] 
-  }}).then(dbUpdate => {
+  db.Workout.updateOne({ _id: urlData.id }, {
+    $push: {
+      exercises: [
+        {
+          "type": data.type,
+          "name": data.name,
+          "duration": data.duration,
+          "distance": data.distance,
+          "weight": data.weight,
+          "reps": data.reps,
+          "sets": data.sets
+        }
+      ]
+    }
+  }).then(dbUpdate => {
     res.json(dbUpdate);
   })
-  .catch(err => {
-    res.json(err);
-  });
-  
-  });
-  
-  //POST
-app.post("/api/workouts", (req,res) => {
+    .catch(err => {
+      res.json(err);
+    });
 
-    let data = req.body;
-  
-    db.Workout.create({
-      day: new Date().setDate(new Date().getDate())
+});
+
+//POST
+app.post("/api/workouts", (req, res) => {
+
+  let data = req.body;
+
+  db.Workout.create({
+    day: new Date().setDate(new Date().getDate())
   }).then(dbUpdate => {
-        res.json(dbUpdate);
-      })
-      .catch(err => {
-        res.json(err);
-      });
-  });
+    res.json(dbUpdate);
+  })
+    .catch(err => {
+      res.json(err);
+    });
+});
 
 
 // Start server 
-app.listen(PORT, function() {
+app.listen(PORT, function () {
   console.log("Server listening on: http://localhost:" + PORT);
 });
